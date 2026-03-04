@@ -1,6 +1,9 @@
 def build_answer(question: str, contexts: list[dict]) -> str:
     if not contexts:
-        return "I couldn't find anything in the knowledge base to answer that. Please ingest relevant notes first."
+        return (
+            "I couldn't find anything in the knowledge base to answer that. "
+            "Please ingest relevant notes first."
+        )
 
     bullets = []
     for c in contexts[:4]:
