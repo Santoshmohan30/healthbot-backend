@@ -19,3 +19,8 @@ venv/
 
 # Env files
 .env
+
+# Runtime data
+data/
+data/chroma/
+*.sqlite3
