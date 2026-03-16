@@ -1,27 +1,26 @@
 from fastapi import APIRouter
 
-from app.rag.prompts import build_answer
-from app.rag.retrieve import retrieve
 from app.schemas.chat import ChatRequest, ChatResponse, Source
+from app.services.answer_service import build_debug_answer
+from app.services.retrieval_service import retrieve_text
 
-router = APIRouter()
-
+router = APIRouter(prefix="/chat", tags=["chat"])
 
 @router.post("", response_model=ChatResponse)
 def chat(req: ChatRequest):
-    hits = retrieve(req.question, k=req.top_k)
+    hits = retrieve_text(req.question, req.top_k)
+    answer = build_debug_answer(req.question, hits)
 
     sources = []
-    for h in hits:
-        meta = h["meta"]
+    for hit in hits:
+        meta = hit["meta"] or {}
         sources.append(
             Source(
                 doc_id=meta.get("doc_id", "unknown"),
-                title=meta.get("title", "source"),
-                chunk_index=int(meta.get("chunk_index", -1)),
-                snippet=h["text"][:240],
+                title=meta.get("title", "unknown"),
+                chunk_index=meta.get("chunk_index", -1),
+                snippet=hit["text"][:300],
             )
         )
 
-    answer = build_answer(req.question, hits)
     return ChatResponse(answer=answer, sources=sources)

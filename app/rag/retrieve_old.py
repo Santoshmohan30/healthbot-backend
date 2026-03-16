@@ -9,7 +9,7 @@ def retrieve(question: str, k: int = 4) -> list[dict]:
     res = col.query(
         query_embeddings=[q_emb],
         n_results=k,
-        include=["documents", "metadatas", "distances", "ids"],
+        include=["documents", "metadatas", "distances"],
     )
 
     hits = []
@@ -22,4 +22,5 @@ def retrieve(question: str, k: int = 4) -> list[dict]:
                 "distance": res["distances"][0][i],
             }
         )
+
     return hits
